@@ -18,29 +18,29 @@ export default function ChatMessage({ message, character }: ChatMessageProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: isUser ? 20 : -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3 }}
-      className={`flex gap-2.5 max-w-[82%] ${isUser ? 'self-end flex-row-reverse' : 'self-start'}`}
+      initial={{ opacity: 0, x: isUser ? 16 : -16, y: 8 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className={`flex gap-2 sm:gap-2.5 max-w-[85%] sm:max-w-[78%] ${isUser ? 'self-end flex-row-reverse' : 'self-start'}`}
     >
       {/* Avatar */}
       {!isUser ? (
-        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-white/10">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden flex-shrink-0 border border-white/10 shadow-sm">
           <img src={character.img} alt={character.name} className="w-full h-full object-cover" />
         </div>
       ) : (
-        <div className="w-8 h-8 rounded-full flex-shrink-0 bg-gradient-to-br from-accent-purple to-accent-blue flex items-center justify-center text-sm">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex-shrink-0 bg-gradient-to-br from-accent-purple to-accent-blue flex items-center justify-center text-xs sm:text-sm shadow-sm">
           👤
         </div>
       )}
 
       {/* Bubble */}
-      <div className="space-y-1">
+      <div className="space-y-1 min-w-0">
         <div
-          className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words
+          className={`px-3.5 sm:px-4 py-2.5 rounded-2xl text-[13px] sm:text-sm leading-relaxed whitespace-pre-wrap break-words
             ${
               isUser
-                ? 'bg-gradient-to-r from-accent-pink via-accent-purple to-accent-blue text-white rounded-br-sm'
+                ? 'bg-gradient-to-r from-accent-pink via-accent-purple to-accent-blue text-white rounded-br-sm shadow-md shadow-accent-purple/20'
                 : 'bg-dark-200 border border-white/[0.07] text-text-primary rounded-bl-sm'
             }`}
         >
@@ -49,11 +49,11 @@ export default function ChatMessage({ message, character }: ChatMessageProps) {
 
         {/* Meta */}
         <div className={`flex items-center gap-2 px-1 ${isUser ? 'justify-end' : ''}`}>
-          <span className="text-[10px] text-text-muted">{formatTime(message.timestamp)}</span>
+          <span className="text-[9px] sm:text-[10px] text-text-muted">{formatTime(message.timestamp)}</span>
           {!isUser && (
             <button
               onClick={() => toggleLike(message.id)}
-              className="transition-transform hover:scale-125"
+              className="transition-transform hover:scale-125 active:scale-90 p-0.5"
             >
               <Heart
                 className={`w-3 h-3 transition-colors ${

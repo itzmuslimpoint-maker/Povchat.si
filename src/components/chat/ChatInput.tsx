@@ -34,7 +34,7 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
   }
 
   return (
-    <div className="border-t border-white/[0.07] bg-dark-100/95 backdrop-blur-xl">
+    <div className="border-t border-white/[0.07] bg-dark-100/95 backdrop-blur-xl flex-shrink-0 safe-bottom">
       {/* Emoji Picker */}
       <AnimatePresence>
         {showEmoji && (
@@ -44,12 +44,12 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="flex flex-wrap gap-1.5 p-3 border-b border-white/[0.05]">
+            <div className="grid grid-cols-10 sm:flex sm:flex-wrap gap-1 p-3 border-b border-white/[0.05]">
               {EMOJIS.map((emoji) => (
                 <button
                   key={emoji}
                   onClick={() => addEmoji(emoji)}
-                  className="text-xl p-1 rounded-lg hover:bg-white/[0.05] transition-transform hover:scale-125"
+                  className="text-xl p-1.5 rounded-lg hover:bg-white/[0.05] transition-transform hover:scale-110 active:scale-95 flex items-center justify-center"
                 >
                   {emoji}
                 </button>
@@ -60,24 +60,24 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
       </AnimatePresence>
 
       {/* Input Bar */}
-      <div className="flex items-center gap-2 p-3 md:p-4">
+      <div className="flex items-center gap-2 p-2.5 sm:p-3 md:p-4">
         <button
           onClick={() => setShowEmoji(!showEmoji)}
-          className={`p-2.5 rounded-full transition-all duration-200 flex-shrink-0
+          className={`p-2 sm:p-2.5 rounded-full transition-all duration-200 flex-shrink-0
             ${
               showEmoji
-                ? 'bg-gradient-to-r from-accent-pink to-accent-purple text-white'
-                : 'bg-dark-200 border border-white/[0.07] text-text-secondary hover:text-white'
+                ? 'bg-gradient-to-r from-accent-pink to-accent-purple text-white shadow-md shadow-accent-purple/30'
+                : 'bg-dark-200 border border-white/[0.07] text-text-secondary hover:text-white active:scale-95'
             }`}
         >
           <Smile className="w-5 h-5" />
         </button>
 
-        <button className="p-2.5 rounded-full bg-dark-200 border border-white/[0.07] text-text-secondary hover:text-white transition-colors flex-shrink-0 hidden sm:flex">
+        <button className="p-2 sm:p-2.5 rounded-full bg-dark-200 border border-white/[0.07] text-text-secondary hover:text-white transition-colors flex-shrink-0 hidden sm:flex">
           <Paperclip className="w-5 h-5" />
         </button>
 
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <input
             ref={inputRef}
             type="text"
@@ -86,13 +86,13 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
             onKeyDown={handleKeyDown}
             placeholder="Type a message..."
             disabled={disabled}
-            className="w-full bg-dark-200 border border-white/[0.07] rounded-full px-5 py-2.5
+            className="w-full bg-dark-200 border border-white/[0.07] rounded-full px-4 sm:px-5 py-2.5
               text-sm text-white placeholder-text-muted outline-none
               focus:border-accent-purple/40 transition-colors disabled:opacity-50"
           />
         </div>
 
-        <button className="p-2.5 rounded-full bg-dark-200 border border-white/[0.07] text-text-secondary hover:text-white transition-colors flex-shrink-0 hidden sm:flex">
+        <button className="p-2 sm:p-2.5 rounded-full bg-dark-200 border border-white/[0.07] text-text-secondary hover:text-white transition-colors flex-shrink-0 hidden md:flex">
           <Mic className="w-5 h-5" />
         </button>
 
@@ -104,7 +104,7 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
             text-white shadow-lg shadow-accent-purple/30
             disabled:opacity-30 disabled:shadow-none disabled:cursor-not-allowed
             hover:shadow-xl hover:shadow-accent-purple/40 hover:scale-105
-            active:scale-95"
+            active:scale-90"
         >
           <Send className="w-5 h-5" />
         </button>
