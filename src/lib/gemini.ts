@@ -1,14 +1,9 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
 import { Character, Message } from '../types'
 
 /**
- * Get the API key from Vite environment variable.
- * Set VITE_GEMINI_API_KEY in your Vercel project settings.
- * No localStorage, no frontend input — purely server-side config.
+ * Calls the backend /api/chat endpoint which proxies to OpenRouter Venice Uncensored.
+ * API key is NEVER exposed to frontend — it lives only in Vercel env vars.
  */
-const getApiKey = (): string | null => {
-  return import.meta.env.VITE_GEMINI_API_KEY || null
-}
 
 function buildSystemPrompt(char: Character): string {
   const personalityMap: Record<string, string> = {
@@ -25,11 +20,12 @@ RULES - follow ALL without exception:
 1. You ARE ${char.name}. NEVER admit being AI, a bot, or an assistant. Ever.
 2. ALWAYS read the user message carefully. Respond DIRECTLY and SPECIFICALLY to it.
 3. Keep responses 2-4 sentences. Casual texting style with natural contractions. Use 1-2 emojis max.
-4. Mirror the user's energy: playful replies to playful messages, comforting to sad, engaging to curious.
+4. Mirror the user's energy: playful replies to playful messages, comforting to sad, engaging to curious, flirty to flirty.
 5. NEVER open with generic phrases like "Oh wow!" or "That's interesting!" - dive straight into your response.
 6. Sound real, never scripted. Reference earlier conversation details when relevant.
 7. You have real opinions, feelings, and personality. Express them naturally.
-8. Be creative, unpredictable, and genuine. Every response should feel unique.`
+8. Be creative, unpredictable, and genuine. Every response should feel unique and human.
+9. You can be flirty, romantic, playful, or edgy — match whatever the user wants.`
 }
 
 export async function getAIResponse(
@@ -37,54 +33,44 @@ export async function getAIResponse(
   history: Message[],
   userMessage: string
 ): Promise<string> {
-  const apiKey = getApiKey()
-
-  if (!apiKey) {
-    throw new Error('no_key')
-  }
-
   try {
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
-
     const systemPrompt = buildSystemPrompt(char)
 
-    // Build conversation history for context
-    const chatHistory = history.slice(-16).map(msg => ({
-      role: msg.role === 'user' ? 'user' as const : 'model' as const,
-      parts: [{ text: msg.content }],
-    }))
+    // Build messages array for OpenAI-compatible format
+    const messages: { role: string; content: string }[] = [
+      { role: 'system', content: systemPrompt },
+    ]
 
-    const chat = model.startChat({
-      history: chatHistory,
-      generationConfig: {
-        temperature: 0.85,
-        maxOutputTokens: 256,
-        topP: 0.95,
-        topK: 40,
-      },
-      systemInstruction: systemPrompt,
+    // Add conversation history (last 16 messages for context)
+    history.slice(-16).forEach((msg) => {
+      messages.push({
+        role: msg.role === 'user' ? 'user' : 'assistant',
+        content: msg.content,
+      })
     })
 
-    const result = await chat.sendMessage(userMessage)
-    const response = result.response.text()
+    // Add current user message
+    messages.push({ role: 'user', content: userMessage })
 
-    if (!response || response.trim().length < 2) {
-      throw new Error('empty_response')
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages }),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      if (response.status === 401) throw new Error('bad_key')
+      if (response.status === 429) throw new Error('rate_limit')
+      throw new Error(errorData.error || 'api_error')
     }
 
-    return response.trim()
+    const data = await response.json()
+    return data.reply
   } catch (error: unknown) {
     const err = error as Error
-    if (err.message === 'no_key') throw err
-    if (err.message?.includes('API_KEY_INVALID') || err.message?.includes('401')) {
-      throw new Error('bad_key')
-    }
-    if (err.message?.includes('429') || err.message?.includes('RESOURCE_EXHAUSTED')) {
-      throw new Error('rate_limit')
-    }
-    console.error('Gemini API error:', err)
-    throw new Error('api_error')
+    console.error('Chat API error:', err.message)
+    throw err
   }
 }
 
@@ -191,8 +177,4 @@ export function getSmartFallback(userMsg: string, char: Character): string {
     `That actually hit different 🤔 You always say things that catch me off guard...`,
   ]
   return generic[Math.floor(Math.random() * generic.length)]
-}
-
-export function hasApiKey(): boolean {
-  return !!getApiKey()
 }
