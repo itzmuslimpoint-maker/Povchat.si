@@ -120,6 +120,24 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* Smooth mobile viewport */
+@supports (height: 100dvh) {
+  .h-screen {
+    height: 100dvh;
+  }
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 640px) {
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @keyframes marquee {

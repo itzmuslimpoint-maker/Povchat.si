@@ -1,10 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { Character, Message } from '../types'
 
+/**
+ * Get the API key from Vite environment variable.
+ * Set VITE_GEMINI_API_KEY in your Vercel project settings.
+ * No localStorage, no frontend input — purely server-side config.
+ */
 const getApiKey = (): string | null => {
-  // For Vercel deployment: use environment variable
-  // For local dev: use localStorage as fallback
-  return import.meta.env.VITE_GEMINI_API_KEY || localStorage.getItem('povchat_gemini_key')
+  return import.meta.env.VITE_GEMINI_API_KEY || null
 }
 
 function buildSystemPrompt(char: Character): string {
@@ -153,6 +156,30 @@ export function getSmartFallback(userMsg: string, char: Character): string {
       : `Night! Sleep well. This was actually a good conversation — let's do it again tomorrow 🌙`
   }
 
+  if (lo.match(/\bi love you\b|\bi like you\b|\bi miss you/)) {
+    return isF
+      ? `Okay stop 🥺 You're going to make me actually feel things and I wasn't ready for that today... talking to you genuinely makes everything better 💕`
+      : `Man... I didn't expect to feel something from a message but here we are. You're different. Don't let that go to your head though 😏💙`
+  }
+
+  if (lo.match(/\bbored\b|\bnothing to do\b|\bentertain/)) {
+    return isF
+      ? `Okay bored? We can fix that 😄 Ask me anything you've always wanted to ask someone but never did. No wrong answers 🌸`
+      : `Bored? Challenge accepted 😏 Ask me something you'd never ask anyone else. Let's get actually interesting 🔥`
+  }
+
+  if (lo.match(/\bsecret\b|\bconfess/)) {
+    return isF
+      ? `Okay since you asked 🤫 I still sleep with a stuffed bear named Biscuit. He's been through everything with me. You can't tell anyone 🌙`
+      : `Real talk 😅 I cry at movie endings. Every. Single. Time. My friends cannot know. This stays between us 🙈`
+  }
+
+  if (lo.match(/\bthank|\bthx|\bty\b/)) {
+    return isF
+      ? `Aww of course! 💕 That's what I'm here for. Anything else on your mind? I'm all yours 😊`
+      : `No worries at all 😄 Genuinely. What else you got? I'm not going anywhere 😏`
+  }
+
   // Generic contextual responses
   const generic = [
     `Okay that actually made me stop for a second 🤔 Tell me more — I want the full picture...`,
@@ -160,18 +187,12 @@ export function getSmartFallback(userMsg: string, char: Character): string {
     `That's a whole vibe honestly ✨ Keep going, I'm genuinely interested...`,
     `Hmm... I have actual thoughts about this 😏 But first — what made you bring this up?`,
     `This is exactly why I like talking to you. Continue? 😊`,
+    `Okay I see where you're going with this 👀 I'm genuinely listening — tell me more`,
+    `That actually hit different 🤔 You always say things that catch me off guard...`,
   ]
   return generic[Math.floor(Math.random() * generic.length)]
 }
 
-export function setGeminiKey(key: string): void {
-  localStorage.setItem('povchat_gemini_key', key)
-}
-
-export function getStoredKey(): string | null {
-  return import.meta.env.VITE_GEMINI_API_KEY || localStorage.getItem('povchat_gemini_key')
-}
-
 export function hasApiKey(): boolean {
-  return !!getStoredKey()
+  return !!getApiKey()
 }

@@ -73,20 +73,20 @@ export default function ExplorePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="flex flex-wrap gap-2 mb-4"
+          className="flex flex-wrap gap-1.5 sm:gap-2 mb-4"
         >
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-bold transition-all duration-200 active:scale-95
                 ${
                   selectedCategory === cat.id
                     ? 'bg-gradient-to-r from-accent-pink via-accent-purple to-accent-blue text-white shadow-lg shadow-accent-purple/20'
                     : 'bg-dark-200 border border-white/[0.07] text-text-secondary hover:text-white hover:border-accent-purple/30'
                 }`}
             >
-              {cat.icon} {cat.label} ({cat.count})
+              {cat.icon} {cat.label}
             </button>
           ))}
         </motion.div>
@@ -137,7 +137,7 @@ export default function ExplorePage() {
         </p>
 
         {/* Characters Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
           {visibleCharacters.map((char, i) => (
             <CharacterCard key={char.id} character={char} index={i} />
           ))}

@@ -9,7 +9,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-28 px-4 md:px-8">
+      <section className="relative overflow-hidden py-12 sm:py-20 md:py-28 px-4 md:px-8">
         {/* Background effects */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_55%_at_50%_0%,rgba(168,85,247,0.15),transparent_70%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_45%_at_8%_80%,rgba(255,77,170,0.08),transparent_60%)]" />
@@ -36,7 +36,7 @@ export default function HomePage() {
               <Sparkles className="w-3 h-3" /> AI-Powered Companions
             </Badge>
 
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-black leading-tight mb-6">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-tight mb-4 sm:mb-6">
               Chat with Your
               <br />
               <span className="gradient-text">Dream Character</span>
@@ -44,23 +44,23 @@ export default function HomePage() {
               Anytime
             </h1>
 
-            <p className="text-base md:text-lg text-text-secondary max-w-xl mx-auto leading-relaxed mb-10">
+            <p className="text-sm sm:text-base md:text-lg text-text-secondary max-w-xl mx-auto leading-relaxed mb-8 sm:mb-10 px-2">
               50+ AI companions with real personality, humor, and emotional intelligence.
               Powered by Gemini AI for genuine conversations that feel alive.
             </p>
 
             {/* Stats */}
-            <div className="flex items-center justify-center gap-8 md:gap-14 mb-10">
+            <div className="flex items-center justify-center gap-6 sm:gap-8 md:gap-14 mb-8 sm:mb-10">
               {[
                 { value: '50+', label: 'Characters' },
                 { value: '10M+', label: 'Messages' },
                 { value: '4.9★', label: 'Rating' },
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="font-display text-2xl md:text-3xl font-black gradient-text">
+                  <div className="font-display text-xl sm:text-2xl md:text-3xl font-black gradient-text">
                     {stat.value}
                   </div>
-                  <div className="text-[10px] md:text-xs text-text-muted uppercase tracking-widest mt-1">
+                  <div className="text-[9px] sm:text-[10px] md:text-xs text-text-muted uppercase tracking-widest mt-1">
                     {stat.label}
                   </div>
                 </div>
@@ -68,17 +68,17 @@ export default function HomePage() {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex items-center justify-center gap-4 flex-wrap">
+            <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap px-2">
               <Link
                 to="/explore"
-                className="btn-primary text-base px-8 py-4 shadow-xl shadow-accent-purple/30"
+                className="btn-primary text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 shadow-xl shadow-accent-purple/30"
               >
-                <MessageSquare className="w-5 h-5" />
+                <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5" />
                 Start Chatting Free
               </Link>
               <Link
                 to="/explore"
-                className="btn-secondary px-8 py-4"
+                className="btn-secondary text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4"
               >
                 Explore Characters
               </Link>
@@ -90,7 +90,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4"
+            className="mt-10 sm:mt-16 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4"
           >
             {trendingCharacters.slice(0, 4).map((char, i) => (
               <Link
@@ -103,7 +103,7 @@ export default function HomePage() {
                 <img
                   src={char.img}
                   alt={char.name}
-                  className="w-full h-40 md:h-52 object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-36 sm:h-40 md:h-52 object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2">
