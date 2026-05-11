@@ -1,22 +1,31 @@
 import { Character } from '../types'
 
+// Hot & attractive female character photos
 const F_IMGS = [
-  'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&q=85',
-  'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&q=85',
-  'https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=500&q=85',
-  'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&q=85',
-  'https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=500&q=85',
-  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&q=85',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&q=85',
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=85',
+  'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=500&q=90&fit=crop',
 ]
 
+// Hot & attractive male character photos
 const M_IMGS = [
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&q=85',
-  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&q=85',
-  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=500&q=85',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=85',
-  'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=500&q=85',
+  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1480455624313-e29b44bbfde1?w=500&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=500&q=90&fit=crop',
 ]
 
 const F_NAMES = ['Sophia', 'Luna', 'Aurora', 'Isabella', 'Mia', 'Zara', 'Aria', 'Nova', 'Elena', 'Chloe', 'Jade', 'Lily', 'Emma', 'Amara', 'Nadia', 'Sienna', 'Valentina', 'Rose', 'Kiara', 'Celeste', 'Freya', 'Skye', 'Aisha', 'Vivienne', 'Harper']
