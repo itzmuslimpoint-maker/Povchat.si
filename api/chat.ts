@@ -14,11 +14,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const apiKey = process.env.DEEPINFRA_API_KEY
+  const apiKey = process.env.UNCENSORED_API_KEY
   if (!apiKey) {
     return res.status(500).json({
       error: 'no_key',
-      help: 'Add DEEPINFRA_API_KEY to Vercel Environment Variables'
+      help: 'Add UNCENSORED_API_KEY to Vercel Environment Variables. Get from uncensored.chat'
     })
   }
 
@@ -29,21 +29,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'messages array is required and must not be empty' })
     }
 
-    // Call DeepInfra OpenAI-compatible endpoint
+    // Call uncensored.chat API
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 25000)
+    const timeout = setTimeout(() => controller.abort(), 30000)
 
-    const response = await fetch('https://api.deepinfra.com/v1/openai/chat/completions', {
+    const response = await fetch('https://uncensored.chat/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'deepseek-ai/DeepSeek-V3',
+        model: 'uncensored-v2',
         messages,
         temperature: 0.9,
-        max_tokens: 350,
+        max_tokens: 400,
         top_p: 0.95,
         frequency_penalty: 0.3,
         presence_penalty: 0.4,
@@ -55,7 +55,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!response.ok) {
       const errText = await response.text()
-      console.error('DeepInfra error:', response.status, errText)
+      console.error('Uncensored.chat error:', response.status, errText)
 
       if (response.status === 401 || response.status === 403) {
         return res.status(401).json({ error: 'invalid_key' })
@@ -70,21 +70,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const reply = data?.choices?.[0]?.message?.content
 
     if (!reply || reply.trim().length < 2) {
-      return res.status(502).json({ error: 'empty_response', raw: JSON.stringify(data).slice(0, 200) })
+      return res.status(502).json({ error: 'empty_response', raw: JSON.stringify(data).slice(0, 300) })
     }
 
-    // Clean up any <think> tags that DeepSeek sometimes adds
+    // Clean up response
     let cleanReply = reply.trim()
+    // Remove any <think> tags (some models add reasoning)
     cleanReply = cleanReply.replace(/<think>[\s\S]*?<\/think>/g, '').trim()
-    // Remove any leading/trailing quotes if the whole response is wrapped
+    // Remove wrapping quotes
     if (cleanReply.startsWith('"') && cleanReply.endsWith('"')) {
       cleanReply = cleanReply.slice(1, -1)
     }
+    // Remove any assistant prefix like "Assistant:" or character name prefix
+    cleanReply = cleanReply.replace(/^(Assistant|AI|Bot):\s*/i, '').trim()
 
     return res.status(200).json({ reply: cleanReply })
   } catch (error: any) {
     if (error.name === 'AbortError') {
-      return res.status(504).json({ error: 'timeout', help: 'Request took too long' })
+      return res.status(504).json({ error: 'timeout' })
     }
     console.error('Chat API error:', error)
     return res.status(500).json({ error: 'server_error', message: error.message })
