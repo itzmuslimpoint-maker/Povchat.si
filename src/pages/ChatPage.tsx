@@ -65,11 +65,14 @@ export default function ChatPage() {
     addMessage(userMsg)
     setTyping(true)
 
-    // Simulate realistic delay
-    await new Promise((r) => setTimeout(r, 700 + Math.random() * 1000))
+    // Capture history BEFORE the async gap (fixes stale state bug)
+    const historyForAI = [...currentMessages]
+
+    // Small natural delay
+    await new Promise((r) => setTimeout(r, 500 + Math.random() * 700))
 
     try {
-      const reply = await getAIResponse(character, currentMessages, text)
+      const reply = await getAIResponse(character, historyForAI, text)
       const aiMsg: Message = {
         id: `msg-ai-${Date.now()}`,
         role: 'assistant',
