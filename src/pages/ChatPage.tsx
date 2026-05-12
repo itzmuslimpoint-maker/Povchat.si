@@ -65,11 +65,15 @@ export default function ChatPage() {
     addMessage(userMsg)
     setTyping(true)
 
-    // Simulate realistic delay
-    await new Promise((r) => setTimeout(r, 700 + Math.random() * 1000))
+    // Capture current history BEFORE the async call (includes all previous messages)
+    // getAIResponse will append the new userMessage itself
+    const historySnapshot = [...currentMessages]
+
+    // Small delay for natural feel
+    await new Promise((r) => setTimeout(r, 600 + Math.random() * 800))
 
     try {
-      const reply = await getAIResponse(character, currentMessages, text)
+      const reply = await getAIResponse(character, historySnapshot, text)
       const aiMsg: Message = {
         id: `msg-ai-${Date.now()}`,
         role: 'assistant',
@@ -79,7 +83,8 @@ export default function ChatPage() {
       addMessage(aiMsg)
     } catch (error: unknown) {
       const err = error as Error
-      // Fall back to smart responses silently
+      console.error('Chat error:', err.message)
+      // Fall back to smart responses
       const fallbackReply = getSmartFallback(text, character)
       const aiMsg: Message = {
         id: `msg-ai-${Date.now()}`,
@@ -90,10 +95,11 @@ export default function ChatPage() {
       addMessage(aiMsg)
 
       if (err.message === 'bad_key') {
-        toast.error('AI temporarily unavailable. Using smart mode.')
+        toast.error('AI key issue — using smart mode')
       } else if (err.message === 'rate_limit') {
-        toast.error('Too many messages. Please wait a moment.')
+        toast.error('Too many messages — wait a moment')
       }
+      // For other errors, stay silent (fallback handles it)
     } finally {
       setTyping(false)
     }
