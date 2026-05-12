@@ -6,9 +6,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end()
-  }
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end()
+    }
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' })
+    }
+
+    const apiKey = process.env.DEEPSEEK_API_KEY
+    if (!apiKey) {
+        return res.status(500).json({
+            error: 'API key not configured',
+            help: 'Add DEEPSEEK_API_KEY to Vercel Environment Variables. Get key from platform.deepseek.com/api_keys'
+        })
+    }
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -23,12 +35,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     })
   }
 
-  try {
-    const { messages } = req.body
+        const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: 'deepseek-chat',
+                messages,
+                temperature: 0.85,
+                max_tokens: 300,
+                top_p: 0.95,
+            })
+        })
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return res.status(400).json({ error: 'messages array required' })
-    }
+        if (!response.ok) {
+            const errorText = await response.text()
+
+            if (response.status === 401 || response.status === 403) {
+                return res.status(403).json({ 
+                    error: 'Invalid API key', 
+                    help: 'DEEPSEEK_API_KEY is invalid. Get valid key from platform.deepseek.com/api_keys' 
+                })
+            }
 
     // Call DeepSeek API (OpenAI-compatible format)
     const response = await fetch('https://api.deepseek.com/chat/completions', {
@@ -48,9 +78,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }),
     })
 
-    if (!response.ok) {
-      const errText = await response.text()
-      console.error('DeepSeek API error:', response.status, errText)
+            return res.status(502).json({ 
+                error: 'API error', 
+                details: errorText 
+            })
+        }
 
       if (response.status === 401 || response.status === 403) {
         return res.status(401).json({ error: 'invalid_key' })
