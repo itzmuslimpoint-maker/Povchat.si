@@ -14,11 +14,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(405).json({ error: 'Method not allowed' })
     }
 
-    const apiKey = process.env.UNCENSORED_CHAT_API_KEY
+    const apiKey = process.env.DEEPSEEK_API_KEY
     if (!apiKey) {
         return res.status(500).json({
             error: 'API key not configured',
-            help: 'Add UNCENSORED_CHAT_API_KEY to Vercel Environment Variables'
+            help: 'Add DEEPSEEK_API_KEY to Vercel Environment Variables. Get key from platform.deepseek.com/api_keys'
         })
     }
 
@@ -29,14 +29,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(400).json({ error: 'Messages array is required' })
         }
 
-        const response = await fetch('https://uncensored-chat-api.com/api/v1/chat', {
+        const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: 'uncensored-v2',
+                model: 'deepseek-chat',
                 messages,
                 temperature: 0.85,
                 max_tokens: 300,
@@ -45,12 +45,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         })
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}))
-            
+            const errorText = await response.text()
+
             if (response.status === 401 || response.status === 403) {
                 return res.status(403).json({ 
                     error: 'Invalid API key', 
-                    help: 'UNCENSORED_CHAT_API_KEY is invalid. Check your key at uncensored.chat dashboard.' 
+                    help: 'DEEPSEEK_API_KEY is invalid. Get valid key from platform.deepseek.com/api_keys' 
                 })
             }
 
@@ -58,9 +58,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 return res.status(429).json({ error: 'Rate limit reached. Please try again later.' })
             }
 
-            return res.status(response.status).json({ 
+            return res.status(502).json({ 
                 error: 'API error', 
-                details: errorData 
+                details: errorText 
             })
         }
 
